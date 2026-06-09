@@ -1,0 +1,1973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIBG Brand Coding Assistant</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px; color: #1a1a1a; min-width: 1024px;
+}
+.top-bar {
+  background: #0f172a; color: #f8fafc;
+  padding: 13px 32px; display: flex; align-items: center; gap: 12px;
+}
+.logo-mark {
+  background: #6366f1; color: #fff; font-weight: 800; font-size: 12px;
+  padding: 4px 8px; border-radius: 6px; letter-spacing: .06em;
+}
+.top-bar h1 { font-size: 15px; font-weight: 600; flex: 1; }
+.top-bar-meta { font-size: 11px; color: #94a3b8; }
+.section { padding: 22px 32px; border-bottom: 1px solid #e2e8f0; }
+.sec-title {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .09em; color: #64748b; margin-bottom: 14px;
+}
+.setup-grid {
+  display: grid; grid-template-columns: 200px 1fr 210px;
+  gap: 28px; align-items: start;
+}
+.field-group { display: flex; flex-direction: column; gap: 5px; }
+.field-label { font-size: 12px; font-weight: 600; color: #374151; }
+.field-sub { font-size: 11px; color: #6b7280; line-height: 1.45; margin-bottom: 2px; }
+select, input[type="number"] {
+  width: 100%; padding: 7px 10px; border: 1px solid #d1d5db;
+  border-radius: 7px; font-size: 13px; font-family: inherit;
+  background: #f9fafb; color: #1a1a1a; outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+select:focus, input[type="number"]:focus, input[type="text"]:focus {
+  border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,.13); background: #fff;
+}
+.brand-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 14px; margin-top: 5px; }
+.brand-row { display: flex; align-items: center; gap: 6px; }
+.b-swatch { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; border: 1px solid rgba(0,0,0,.12); }
+.brand-row label { font-size: 11px; color: #6b7280; white-space: nowrap; min-width: 44px; }
+input[type="text"].b-inp {
+  flex: 1; padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 6px;
+  font-size: 13px; font-family: inherit; background: #f9fafb; color: #1a1a1a;
+  outline: none; transition: border-color .15s, box-shadow .15s;
+}
+input[type="text"].b-inp:focus {
+  border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,.13); background: #fff;
+}
+.upload-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 8px; border: none;
+  font-size: 13px; font-weight: 600; font-family: inherit;
+  cursor: pointer; transition: opacity .15s; white-space: nowrap;
+}
+.btn:hover { opacity: .85; } .btn:active { opacity: .7; }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.btn-primary { background: #6366f1; color: #fff; }
+.btn-detect  { background: #f59e0b; color: #000; }
+.btn-success { background: #10b981; color: #fff; }
+.btn-csv     { background: #0ea5e9; color: #fff; }
+.btn-txt     { background: #8b5cf6; color: #fff; }
+.btn-sm      { padding: 5px 11px; font-size: 12px; border-radius: 6px; }
+.file-badge {
+  font-size: 12px; padding: 6px 12px; border-radius: 6px;
+  background: #f1f5f9; border: 1px dashed #cbd5e1; color: #64748b;
+}
+.file-badge.loaded {
+  background: #ecfdf5; border-color: #6ee7b7; color: #065f46; font-weight: 600;
+}
+/* DETECT PANEL */
+.detect-panel {
+  margin-top: 14px; background: #fefce8; border: 1px solid #fde68a;
+  border-radius: 10px; padding: 14px 18px;
+}
+.detect-title {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .07em; color: #92400e; margin-bottom: 10px;
+}
+.detect-row { display: flex; align-items: flex-start; gap: 14px; flex-wrap: wrap; }
+.detect-left { flex: 1; min-width: 200px; }
+.detect-note { font-size: 11px; color: #78350f; margin-top: 6px; line-height: 1.5; }
+.candidates-box {
+  flex: 2; min-width: 280px;
+  background: #fff; border: 1px solid #fcd34d; border-radius: 8px;
+  padding: 10px 12px; min-height: 56px;
+}
+.candidates-title { font-size: 11px; font-weight: 600; color: #92400e; margin-bottom: 6px; }
+.candidate-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.ctag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 8px; border-radius: 20px; font-size: 12px;
+  background: #e0e7ff; color: #3730a3;
+  border: 1.5px dashed #6366f1; cursor: pointer; transition: background .12s;
+}
+.ctag:hover { background: #c7d2fe; }
+.ctag.selected { background: #6366f1; color: #fff; border-style: solid; }
+.ctag .x { font-size: 10px; opacity: .7; margin-left: 2px; }
+.no-candidates { font-size: 12px; color: #a16207; font-style: italic; }
+#detectStatus { font-size: 12px; color: #92400e; margin-top: 6px; font-style: italic; }
+#detectStatus.ok  { color: #065f46; font-style: normal; font-weight: 600; }
+#detectStatus.err { color: #991b1b; font-style: normal; font-weight: 600; }
+.manual-add-row {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-top: 10px; padding-top: 10px;
+  border-top: 1px dashed #fcd34d;
+}
+.apply-row { margin-top: 10px; display: flex; align-items: center; gap: 10px; }
+
+/* ── BULK YN TOGGLE BUTTONS ── */
+.bulk-yn-bar {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 10px 16px; background: #f8fafc; border: 1px solid #e2e8f0;
+  border-radius: 10px; margin-bottom: 10px;
+}
+.bulk-yn-group {
+  display: flex; align-items: center; gap: 6px;
+}
+.bulk-yn-label {
+  font-size: 11px; font-weight: 700; color: #475569;
+  text-transform: uppercase; letter-spacing: .06em;
+  white-space: nowrap;
+}
+.yn-toggle-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 26px; border-radius: 6px; border: 1.5px solid transparent;
+  font-size: 12px; font-weight: 700; font-family: inherit;
+  cursor: pointer; transition: all .15s;
+}
+.yn-toggle-btn.y-btn {
+  background: #f0fdf4; border-color: #86efac; color: #16a34a;
+}
+.yn-toggle-btn.y-btn:hover, .yn-toggle-btn.y-btn.active {
+  background: #16a34a; border-color: #16a34a; color: #fff;
+}
+.yn-toggle-btn.n-btn {
+  background: #fef2f2; border-color: #fca5a5; color: #dc2626;
+}
+.yn-toggle-btn.n-btn:hover, .yn-toggle-btn.n-btn.active {
+  background: #dc2626; border-color: #dc2626; color: #fff;
+}
+.yn-toggle-btn.na-btn {
+  background: #f8fafc; border-color: #cbd5e1; color: #64748b;
+}
+.yn-toggle-btn.na-btn:hover, .yn-toggle-btn.na-btn.active {
+  background: #64748b; border-color: #64748b; color: #fff;
+}
+.bulk-yn-divider {
+  width: 1px; height: 28px; background: #e2e8f0; margin: 0 4px;
+}
+
+/* LEGEND */
+.legend-row { display: flex; flex-wrap: wrap; gap: 7px; min-height: 24px; margin-bottom: 10px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px 3px 6px; border-radius: 20px;
+  font-size: 12px; font-weight: 500; color: #000; border: 1px solid rgba(0,0,0,.11);
+}
+.chip-sq { width: 9px; height: 9px; border-radius: 2px; }
+.chip.unlisted { border: 1.5px dashed #6366f1; font-style: italic; }
+/* PDF button */
+.btn-pdf { background: #dc2626; color: #fff; }
+.pdf-status {
+  font-size: 12px; color: #64748b; font-style: italic;
+  display: none;
+}
+/* TEXT DISPLAY */
+#textDisplay {
+  width: 100%; min-height: 400px; max-height: 600px; overflow-y: auto;
+  background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;
+  padding: 18px 20px; font-family: 'Courier New', Courier, monospace;
+  font-size: 13px; line-height: 1.6; color: #1e293b;
+  white-space: pre-wrap; word-break: break-word;
+}
+.td-placeholder { color: #94a3b8; }
+.hl-unlisted {
+  background: #e0e7ff; color: #000; border-radius: 3px;
+  outline: 2px solid #6366f1; outline-offset: 1px;
+}
+/* TABLE */
+.tbl-wrap {
+  overflow-x: auto;
+  overflow-y: scroll;
+  max-height: 400px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+table { width: 100%; border-collapse: collapse; min-width: 1000px; font-size: 13px; }
+thead tr { background: #f8fafc; }
+thead th {
+  padding: 8px 10px; text-align: left; font-size: 10.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .05em; color: #64748b;
+  border-bottom: 1px solid #e2e8f0; white-space: nowrap;
+  position: sticky; top: 0; z-index: 2; background: #f8fafc;
+}
+thead th.col-unlisted,
+thead th.col-masstie,
+thead th.col-notes,
+thead th.col-yn,
+thead th.col-cross { color: #64748b; background: #f8fafc; }
+tbody tr[data-batch="current"] { background: #fff; }
+tbody tr[data-batch="saved"]   { background: #fafafa; opacity: .75; }
+tbody tr[data-batch="saved"] td { color: #94a3b8; }
+tbody tr[data-batch="current"]:hover { background: #f8fafc; }
+tbody tr[data-batch="saved"]:hover   { background: #f1f5f9; opacity: 1; }
+tbody td { padding: 6px 10px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; min-width: 60px; }
+tbody td[contenteditable="true"]:focus {
+  outline: 2px solid #6366f1; outline-offset: -2px; background: #fff; border-radius: 3px;
+}
+td.rid-cell {
+  border-left: 3px solid transparent; font-weight: 600;
+  font-size: 11.5px; font-family: 'Courier New', Courier, monospace;
+}
+td.col-unlisted-cell {
+  font-size: 12px; color: #374151;
+  max-width: 200px; word-break: break-word;
+}
+td.col-masstie-cell { font-size: 12px; color: #374151; text-align: center; }
+td.col-masstiebrand-cell {
+  font-size: 12px; color: #374151;
+  max-width: 200px; word-break: break-word;
+}
+td.col-notes-cell {
+  font-size: 12px; min-width: 140px; max-width: 260px; word-break: break-word;
+}
+td.col-notes-cell:empty::before {
+  content: 'Notes...'; color: #cbd5e1; font-style: italic; pointer-events: none;
+}
+td.col-yn-cell  { font-size: 12px; text-align: center; min-width: 54px; }
+td.col-cross-cell { font-size: 12px; text-align: center; min-width: 72px; }
+
+/* ── Per-cell YN toggle buttons in table rows ── */
+td.col-yn-cell .cell-yn-wrap,
+td.col-cross-cell .cell-yn-wrap {
+  display: flex; align-items: center; justify-content: center; gap: 3px;
+}
+.cell-yn-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 22px; border-radius: 5px; border: 1.5px solid transparent;
+  font-size: 11px; font-weight: 700; font-family: inherit; cursor: pointer;
+  transition: all .12s;
+}
+.cell-yn-btn.y-btn { background: #f0fdf4; border-color: #86efac; color: #16a34a; }
+.cell-yn-btn.y-btn.active { background: #16a34a; border-color: #16a34a; color: #fff; }
+.cell-yn-btn.n-btn { background: #fef2f2; border-color: #fca5a5; color: #dc2626; }
+.cell-yn-btn.n-btn.active { background: #dc2626; border-color: #dc2626; color: #fff; }
+.cell-yn-btn.na-btn { background: #f8fafc; border-color: #cbd5e1; color: #64748b; }
+.cell-yn-btn.na-btn.active { background: #64748b; border-color: #64748b; color: #fff; }
+
+.empty-msg { text-align: center; padding: 36px; color: #94a3b8; font-size: 13px; }
+.row-counter {
+  font-size: 11px; color: #64748b; padding: 4px 10px; border-radius: 6px;
+  background: #f1f5f9; border: 1px solid #e2e8f0; white-space: nowrap;
+}
+.row-counter strong { color: #374151; }
+.save-row { display: flex; align-items: center; gap: 14px; margin-top: 12px; flex-wrap: wrap; }
+#saveMsg {
+  display: none; font-size: 12px; font-weight: 600; color: #059669;
+  background: #ecfdf5; border: 1px solid #a7f3d0; padding: 5px 12px; border-radius: 6px;
+}
+.export-row {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding: 18px 32px; background: #f8fafc; border-top: 1px solid #e2e8f0;
+}
+.export-note { font-size: 11px; color: #94a3b8; }
+
+/* ── Analyst Name Banner ── */
+.analyst-bar {
+  background: #0f172a;
+  border-top: 1px solid #1e293b;
+  padding: 8px 32px;
+  display: flex; align-items: center; gap: 14px;
+}
+.analyst-bar label {
+  font-size: 11px; font-weight: 700; color: #94a3b8;
+  text-transform: uppercase; letter-spacing: .07em; white-space: nowrap;
+}
+.analyst-inp {
+  padding: 5px 10px; border: 1px solid #334155;
+  border-radius: 6px; font-size: 13px; font-family: inherit;
+  background: #1e293b; color: #f1f5f9; width: 260px; outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.analyst-inp:focus {
+  border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,.18);
+}
+.analyst-saved-badge {
+  font-size: 11px; color: #6ee7b7; font-weight: 600;
+  display: none;
+}
+/* ── Amendment 1: Completed Responses Counter ── */
+.completed-counter {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 18px; border-radius: 50px;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border: 2px solid #6ee7b7; color: #065f46;
+  font-size: 13px; font-weight: 700; margin-top: 12px;
+  box-shadow: 0 2px 8px rgba(16,185,129,0.15);
+  letter-spacing: 0.01em;
+}
+.completed-counter .cc-num {
+  font-size: 18px; font-weight: 800; color: #059669;
+}
+.cc-reset {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #6ee7b7; color: #065f46;
+  font-size: 11px; font-weight: 900; line-height: 1;
+  border: none; cursor: pointer; padding: 0;
+  transition: background 0.15s, color 0.15s;
+  margin-left: 2px;
+}
+.cc-reset:hover { background: #059669; color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <span class="logo-mark">AIBG</span>
+  <h1>Brand Coding Assistant</h1>
+  <span class="top-bar-meta">Ctrl+S / ⌘+S — Save Analysis</span>
+</div>
+<!-- Analyst Name Bar -->
+<div class="analyst-bar">
+  <label for="analystName">Analyst Name</label>
+  <input class="analyst-inp" type="text" id="analystName" placeholder="Enter your name (saved automatically)" maxlength="80" autocomplete="name">
+  <span class="analyst-saved-badge" id="analystSavedBadge">✓ Saved</span>
+  <span style="font-size:11px;color:#475569;margin-left:8px;">Name will appear on every PDF download</span>
+</div>
+
+<!-- SECTION 1 — SETUP -->
+<div class="section">
+  <div class="sec-title">Setup Panel</div>
+  <div class="setup-grid">
+    <div class="field-group">
+      <label class="field-label" for="catSel">Category</label>
+      <select id="catSel"></select>
+    </div>
+    <div class="field-group">
+      <div class="field-label">Brand Name Strings</div>
+      <div class="field-sub">Enter exactly as they appear in the TXT file — case-insensitive search will be applied</div>
+      <div class="brand-grid" id="brandGrid"></div>
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="allCount">ALL_brand_count for this response</label>
+      <div class="field-sub">Auto-filled after detection. Or enter manually. Clears on next upload.</div>
+      <input type="number" id="allCount" min="0" placeholder="e.g. 12">
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2 — FILE UPLOAD + DETECT -->
+<div class="section">
+  <div class="sec-title">File Upload</div>
+  <div class="upload-row">
+    <input type="file" id="fileIn" accept=".txt" style="display:none">
+    <button class="btn btn-primary" onclick="document.getElementById('fileIn').click()">↑ Upload TXT File</button>
+    <div class="file-badge" id="fileBadge">No file loaded</div>
+  </div>
+  <div class="detect-panel">
+    <div class="detect-title">🔍 Auto-Detect Unlisted Brands</div>
+    <div class="detect-row">
+      <div class="detect-left">
+        <button class="btn btn-detect" id="detectBtn" onclick="detectBrands()" disabled>Detect Brands in Text</button>
+        <div class="detect-note">
+          Scans for proper nouns and brand-like terms<br>not in your 10-brand list. No API needed.
+        </div>
+        <div id="detectStatus">Upload a TXT file first.</div>
+      </div>
+      <div class="candidates-box">
+        <div class="candidates-title">Detected candidates — click to include / exclude:</div>
+        <div class="candidate-tags" id="candidateTags">
+          <span class="no-candidates">Run detection to see candidates here.</span>
+        </div>
+      </div>
+    </div>
+    <!-- Manual add row -->
+    <div class="manual-add-row">
+      <span style="font-size:11px;font-weight:600;color:#78350f;">Add manually:</span>
+      <input type="text" id="manualBrandInp" class="b-inp" placeholder="e.g. OnePlus" style="width:180px;">
+      <button class="btn btn-detect btn-sm" onclick="addManualCandidate()">+ Add</button>
+      <span style="font-size:11px;color:#78350f;">Type a brand not detected above and click Add — it will appear as a selected tag.</span>
+    </div>
+    <div class="apply-row">
+      <button class="btn btn-success btn-sm" id="applyBtn" onclick="applySelected()" disabled>✓ Apply Selected to Table</button>
+      <span style="font-size:11px;color:#78350f;">Select candidates above, then apply to update Unlisted_Brands column and ALL_brand_count.</span>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3 — TEXT DISPLAY -->
+<div class="section">
+  <div class="sec-title">Text Display</div>
+  <div class="legend-row" id="legendRow"></div>
+  <div id="hlModeBar" style="display:none; padding:6px 12px; background:#fef3c7; border:1px solid #fcd34d; border-radius:8px; font-size:12px; font-weight:600; color:#92400e; margin-bottom:8px;">
+    ✏️ Highlight mode: <span id="hlModeBrandName"></span> — Select text to add · Click any highlight of this brand to toggle off · Click chip again to exit
+  </div>
+  <div id="textDisplay" class="td-placeholder">Upload a TXT file to view its contents here.</div>
+  <div style="margin-top:12px;display:flex;align-items:center;gap:12px;">
+    <button class="btn btn-pdf" id="pdfBtn" onclick="downloadHighlightedPDF()" disabled>⬇ Download Highlighted PDF</button>
+    <span class="pdf-status" id="pdfStatus"></span>
+  </div>
+  <div class="completed-counter" id="completedCounter">
+    ✅ Completed Responses: <span class="cc-num" id="completedNum">0</span>
+    <button class="cc-reset" id="ccResetBtn" title="Reset counter">✕</button>
+  </div>
+</div>
+
+<!-- SECTION 4 — CODING TABLE -->
+<div class="section">
+  <div class="sec-title">Coding Table</div>
+
+  <!-- ── BULK YN TOGGLE BAR ── -->
+  <div class="bulk-yn-bar" id="bulkYnBar">
+    <span style="font-size:11px;font-weight:700;color:#374151;white-space:nowrap;">Fill All Rows →</span>
+
+    <!-- Truncated_YN -->
+    <div class="bulk-yn-group">
+      <span class="bulk-yn-label">Truncated</span>
+      <button class="yn-toggle-btn y-btn" onclick="bulkFillYN(8,'Y','truncated')" title="Set all Truncated_YN = Y">Y</button>
+      <button class="yn-toggle-btn n-btn" onclick="bulkFillYN(8,'N','truncated')" title="Set all Truncated_YN = N">N</button>
+      <button class="yn-toggle-btn na-btn" onclick="bulkFillYN(8,'NA','truncated')" title="Set all Truncated_YN = NA">NA</button>
+    </div>
+    <div class="bulk-yn-divider"></div>
+
+    <!-- Visual_Only_YN -->
+    <div class="bulk-yn-group">
+      <span class="bulk-yn-label">Visual Only</span>
+      <button class="yn-toggle-btn y-btn" onclick="bulkFillYN(9,'Y','visualOnly')" title="Set all Visual_Only_YN = Y">Y</button>
+      <button class="yn-toggle-btn n-btn" onclick="bulkFillYN(9,'N','visualOnly')" title="Set all Visual_Only_YN = N">N</button>
+      <button class="yn-toggle-btn na-btn" onclick="bulkFillYN(9,'NA','visualOnly')" title="Set all Visual_Only_YN = NA">NA</button>
+    </div>
+    <div class="bulk-yn-divider"></div>
+
+    <!-- Hindi_Response_YN -->
+    <div class="bulk-yn-group">
+      <span class="bulk-yn-label">Hindi</span>
+      <button class="yn-toggle-btn y-btn" onclick="bulkFillYN(10,'Y','hindi')" title="Set all Hindi_Response_YN = Y">Y</button>
+      <button class="yn-toggle-btn n-btn" onclick="bulkFillYN(10,'N','hindi')" title="Set all Hindi_Response_YN = N">N</button>
+      <button class="yn-toggle-btn na-btn" onclick="bulkFillYN(10,'NA','hindi')" title="Set all Hindi_Response_YN = NA">NA</button>
+    </div>
+    <div class="bulk-yn-divider"></div>
+
+    <!-- Cross_Category_YN — bulk + individually editable -->
+    <div class="bulk-yn-group">
+      <span class="bulk-yn-label">Cross Cat</span>
+      <button class="yn-toggle-btn y-btn" onclick="bulkFillYN(13,'Y','crossCat')" title="Set all Cross_Category_YN = Y">Y</button>
+      <button class="yn-toggle-btn n-btn" onclick="bulkFillYN(13,'N','crossCat')" title="Set all Cross_Category_YN = N">N</button>
+      <button class="yn-toggle-btn na-btn" onclick="bulkFillYN(13,'NA','crossCat')" title="Set all Cross_Category_YN = NA">NA</button>
+    </div>
+    <div class="bulk-yn-divider"></div>
+
+    <!-- Product_Line_Only_YN — bulk + individually editable -->
+    <div class="bulk-yn-group">
+      <span class="bulk-yn-label">Prod Line</span>
+      <button class="yn-toggle-btn y-btn" onclick="bulkFillYN(14,'Y','prodLine')" title="Set all Product_Line_Only_YN = Y">Y</button>
+      <button class="yn-toggle-btn n-btn" onclick="bulkFillYN(14,'N','prodLine')" title="Set all Product_Line_Only_YN = N">N</button>
+      <button class="yn-toggle-btn na-btn" onclick="bulkFillYN(14,'NA','prodLine')" title="Set all Product_Line_Only_YN = NA">NA</button>
+    </div>
+    <div style="font-size:10px;color:#94a3b8;margin-left:4px;">Cross Cat &amp; Prod Line cells remain individually editable after bulk fill</div>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>RID</th><th>Category</th><th>Brand</th>
+          <th>ALL_brand_count</th><th>Brand_Present_Binary</th>
+          <th>Brand_Mention_Count</th><th>FirstMentionRank</th><th>RankScore_auto</th>
+          <th class="col-yn">Truncated_YN</th>
+          <th class="col-yn">Visual_Only_YN</th>
+          <th class="col-yn">Hindi_Response_YN</th>
+          <th class="col-masstie">Mass_Tie_YN</th>
+          <th class="col-masstie">Mass_Tie_YN (Brands)</th>
+          <th class="col-cross">Cross_Category_YN</th>
+          <th class="col-yn">Product_Line_Only_YN</th>
+          <th class="col-unlisted">Unlisted_Brands</th>
+          <th class="col-notes">Notes</th>
+        </tr>
+      </thead>
+      <tbody id="tBody">
+        <tr id="emptyRow"><td colspan="17" class="empty-msg">No data yet — upload a TXT file to begin.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="save-row">
+    <button class="btn btn-success" onclick="saveAnalysis()">💾 Save This Analysis</button>
+    <span class="row-counter" id="rowCounter"></span>
+    <div id="saveMsg"></div>
+  </div>
+</div>
+
+<!-- SECTION 5 — EXPORT -->
+<div class="export-row">
+  <button class="btn btn-csv" onclick="exportCSV()">⬇ Export Session as CSV</button>
+  <button class="btn btn-txt" onclick="exportTXT()">⬇ Export Session Log as TXT</button>
+  <span class="export-note">Exports include all rows saved via "Save This Analysis"</span>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   CONSTANTS
+═══════════════════════════════════════════════════════════════ */
+const COLOURS = [
+  '#FF4D6D','#2EC4B6','#FF9F1C','#7B2D8B','#3A86FF',
+  '#06D6A0','#FFD60A','#E63946','#118AB2','#F77F00',
+];
+const COLOUR_TEXT = [
+  '#fff','#000','#000','#fff','#fff','#000','#000','#fff','#fff','#000',
+];
+const N_BRANDS = 10;
+const CATS = ['Wearables','Smartphones','Microwaves','Televisions','Wireless Headphones'];
+
+const STOPWORDS = new Set([
+  'i','me','my','myself','we','our','ours','ourselves','you','your','yours','yourself',
+  'he','him','his','himself','she','her','hers','herself','it','its','itself',
+  'they','them','their','theirs','themselves','what','which','who','whom','this','that',
+  'these','those','am','is','are','was','were','be','been','being','have','has','had',
+  'having','do','does','did','doing','a','an','the','and','but','if','or','because',
+  'as','until','while','of','at','by','for','with','about','against','between','into',
+  'through','during','before','after','above','below','to','from','up','down','in','out',
+  'on','off','over','under','again','further','then','once','here','there','when','where',
+  'why','how','all','both','each','few','more','most','other','some','such','no','nor',
+  'not','only','own','same','so','than','too','very','can','will','just','should','now',
+  'also','would','could','use','used','using','like','one','two','three','first','second',
+  'third','new','good','great','best','well','still','even','though','however','always',
+  'never','often','usually','already','actually','really','quite','much','many','every',
+  'any','most','got','get','getting','set','make','made','go','going','gone','come','came',
+  'take','taken','see','seen','know','known','think','thinking','feel','felt','look','say',
+  'said','want','wanted','need','needed','give','gave','given','tell','told','find','found',
+  'time','way','day','year','month','week','people','man','woman','child','world','life',
+  'hand','part','place','case','company','system','program','question','government',
+  'number','night','point','home','water','room','mother','area','money','story','fact',
+  'lot','right','study','book','eye','job','word','business','issue','side','kind',
+  'head','house','service','friend','father','power','hour','game','line','end','among',
+  'ever','long','big','since','without','let','something','us','seem','seemed','put',
+  'try','tried','ask','asked','show','showed','available','including','information',
+  'product','products','price','quality','value','feature','features','performance',
+  'design','battery','screen','display','camera','sound','audio','video','brand','brands',
+  'device','devices','smartphone','phone','watch','tablet','laptop','computer',
+  'headphone','headphones','earphone','earphones','tv','television','microwave','oven',
+  'wearable','wearables','wireless','bluetooth','wifi','internet','online','app','apps',
+  'software','hardware','user','users','customer','customers','review','reviews',
+  'rating','ratings','recommend','recommended','purchase','purchased','bought','buy',
+  'buying','sell','sold','market','marketing','india','indian','rs','inr','usd',
+  'yes','no','maybe','ok','okay','sure','nice','bad','poor','average','excellent',
+  'overall','generally','specifically','compared','comparison','versus','vs','per',
+  'days','months','years','ago','back','recently','currently','soon','later',
+  'after','before','since','already','yet','still','just','only','also','well',
+  'this','that','these','those','it','he','she','they','we',
+]);
+
+/* ═══════════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════════ */
+let fileText           = '';
+let currentRID         = '';
+let sessionLog         = [];
+let unlistedBrands     = [];
+let detectedCandidates = [];
+let selectedCandidates = new Set();
+let _debounceTimer     = null;
+
+let _pdfDownloadedRID  = '';
+let _savedRIDsSession  = new Set();
+
+let activeHighlightSlot = -1;
+let manualHighlights    = [];
+let suppressions        = [];
+
+/* ═══════════════════════════════════════════════════════════════
+   BULK YN FILL
+   colIdx: 0-based TD index in the row
+   val: 'Y' | 'N' | 'NA' | ''
+   Only fills current-batch rows.
+═══════════════════════════════════════════════════════════════ */
+function bulkFillYN(colIdx, val) {
+  const rows = document.querySelectorAll('#tBody tr[data-batch="current"]');
+  rows.forEach(tr => {
+    const td = tr.querySelectorAll('td')[colIdx];
+    if (!td) return;
+    // Find the cell-yn-btn elements and update active state
+    td.querySelectorAll('.cell-yn-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.val === val);
+    });
+    td.dataset.ynval = val;
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   COMPLETED COUNTER
+═══════════════════════════════════════════════════════════════ */
+function loadCompletedCounter() {
+  const count = parseInt(localStorage.getItem('aibg_completed_count') || '0', 10) || 0;
+  document.getElementById('completedNum').textContent = String(count);
+}
+function resetCompletedCounter() {
+  if (!confirm('Reset completed responses counter to 0?')) return;
+  localStorage.removeItem('aibg_completed_count');
+  localStorage.removeItem('aibg_completed_rids');
+  _pdfDownloadedRID = '';
+  _savedRIDsSession.clear();
+  document.getElementById('completedNum').textContent = '0';
+}
+function checkCompletionTrigger() {
+  if (!currentRID) return;
+  if (_pdfDownloadedRID !== currentRID) return;
+  if (!_savedRIDsSession.has(currentRID)) return;
+  let completedRIDs;
+  try { completedRIDs = new Set(JSON.parse(localStorage.getItem('aibg_completed_rids') || '[]')); }
+  catch(e) { completedRIDs = new Set(); }
+  if (completedRIDs.has(currentRID)) return;
+  completedRIDs.add(currentRID);
+  const newCount = completedRIDs.size;
+  localStorage.setItem('aibg_completed_rids', JSON.stringify([...completedRIDs]));
+  localStorage.setItem('aibg_completed_count', String(newCount));
+  document.getElementById('completedNum').textContent = String(newCount);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HIGHLIGHT MODE
+═══════════════════════════════════════════════════════════════ */
+function toggleHighlightMode(slot) {
+  activeHighlightSlot = (activeHighlightSlot === slot) ? -1 : slot;
+  updateHighlightModeUI();
+}
+function updateHighlightModeUI() {
+  const bar = document.getElementById('hlModeBar');
+  const chips = document.querySelectorAll('#legendRow .chip[data-slot]');
+  if (activeHighlightSlot >= 0) {
+    const brand = getBrands()[activeHighlightSlot] || ('Brand ' + (activeHighlightSlot + 1));
+    bar.style.display = 'block';
+    document.getElementById('hlModeBrandName').textContent = brand;
+    chips.forEach(c => {
+      const s = parseInt(c.dataset.slot);
+      c.style.outline = (s === activeHighlightSlot) ? '3px solid #1e293b' : '';
+      c.style.outlineOffset = '2px';
+    });
+  } else {
+    bar.style.display = 'none';
+    chips.forEach(c => { c.style.outline = ''; });
+  }
+}
+function updateManualCounts() { recomputeCurrentBatch(); }
+
+/* ═══════════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════════ */
+(function init() {
+  const sel = document.getElementById('catSel');
+  CATS.forEach((c, i) => {
+    const o = document.createElement('option');
+    o.value = c; o.textContent = c; if (i === 0) o.selected = true;
+    sel.appendChild(o);
+  });
+  sel.addEventListener('change', onBrandOrCategoryChange);
+
+  const grid = document.getElementById('brandGrid');
+  for (let i = 0; i < N_BRANDS; i++) {
+    const row = document.createElement('div'); row.className = 'brand-row';
+    const sw  = document.createElement('span'); sw.className = 'b-swatch'; sw.style.background = COLOURS[i];
+    const lbl = document.createElement('label'); lbl.htmlFor = 'b' + i; lbl.textContent = 'Brand ' + (i + 1);
+    const inp = document.createElement('input');
+    inp.type = 'text'; inp.className = 'b-inp'; inp.id = 'b' + i; inp.placeholder = 'Brand ' + (i + 1);
+    inp.addEventListener('input', (function(slot) {
+      return function() {
+        manualHighlights = manualHighlights.filter(h => h.slot !== slot);
+        suppressions     = suppressions.filter(s => s.slot !== slot);
+        onBrandOrCategoryChange();
+      };
+    })(i));
+    row.appendChild(sw); row.appendChild(lbl); row.appendChild(inp);
+    grid.appendChild(row);
+  }
+  document.getElementById('allCount').addEventListener('input', syncAllCount);
+  document.getElementById('fileIn').addEventListener('change', handleFileUpload);
+
+  document.getElementById('manualBrandInp').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); addManualCandidate(); }
+  });
+
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveAnalysis(); }
+  });
+
+  document.getElementById('tBody').addEventListener('paste', e => {
+    const target = e.target.closest('td[contenteditable="true"]');
+    if (!target) return;
+    e.preventDefault();
+    const plain = (e.clipboardData || window.clipboardData).getData('text/plain');
+    document.execCommand('insertText', false, plain);
+  });
+
+  document.getElementById('tBody').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.target.closest('td[contenteditable="true"]')) {
+      e.preventDefault(); e.target.blur();
+    }
+  });
+
+  document.getElementById('textDisplay').addEventListener('mouseup', () => {
+    if (activeHighlightSlot < 0) return;
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+    const range = sel.getRangeAt(0);
+    const el = document.getElementById('textDisplay');
+    const preRange = document.createRange();
+    preRange.selectNodeContents(el);
+    preRange.setEnd(range.startContainer, range.startOffset);
+    const start = preRange.toString().length;
+    const selectedText = range.toString();
+    if (!selectedText.trim()) { sel.removeAllRanges(); return; }
+    const end = start + selectedText.length;
+    sel.removeAllRanges();
+    manualHighlights.push({ slot: activeHighlightSlot, start, end });
+    renderText();
+    updateManualCounts();
+  });
+
+  document.getElementById('textDisplay').addEventListener('click', (evt) => {
+    if (activeHighlightSlot < 0) return;
+    const target = evt.target.closest('[data-mh-idx],[data-auto-slot]');
+    if (!target) return;
+    if (target.dataset.mhIdx !== undefined) {
+      const idx = parseInt(target.dataset.mhIdx);
+      if (!isNaN(idx) && manualHighlights[idx] && manualHighlights[idx].slot === activeHighlightSlot) {
+        manualHighlights.splice(idx, 1); renderText(); updateManualCounts();
+      }
+    } else if (target.dataset.autoSlot !== undefined) {
+      const autoSlot = parseInt(target.dataset.autoSlot);
+      if (autoSlot !== activeHighlightSlot) return;
+      const start = parseInt(target.dataset.autoStart);
+      const end   = parseInt(target.dataset.autoEnd);
+      const existingIdx = suppressions.findIndex(s => s.slot === autoSlot && s.start === start && s.end === end);
+      if (existingIdx >= 0) suppressions.splice(existingIdx, 1);
+      else suppressions.push({ slot: autoSlot, start, end });
+      renderText(); updateManualCounts();
+    }
+  });
+
+  (function initAnalystName() {
+    const inp   = document.getElementById('analystName');
+    const badge = document.getElementById('analystSavedBadge');
+    const saved = localStorage.getItem('aibg_analyst_name') || '';
+    if (saved) { inp.value = saved; badge.style.display = 'inline'; }
+    let _badgeTimer;
+    inp.addEventListener('input', () => {
+      localStorage.setItem('aibg_analyst_name', inp.value.trim());
+      badge.style.display = 'inline';
+      clearTimeout(_badgeTimer);
+      _badgeTimer = setTimeout(() => { badge.style.display = 'none'; }, 2000);
+    });
+  })();
+
+  loadCompletedCounter();
+  document.getElementById('ccResetBtn').addEventListener('click', resetCompletedCounter);
+  updateLegend();
+  updateRowCounter();
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════════════════ */
+function getBrands() {
+  const out = [];
+  for (let i = 0; i < N_BRANDS; i++) out.push(document.getElementById('b' + i).value.trim());
+  return out;
+}
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+          .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function escRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+function isoDate() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function dlFile(content, name, mime) {
+  const blob = new Blob([content], {type: mime});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+function csvCell(v) {
+  const s = (v == null) ? '' : String(v);
+  return (s.includes(',') || s.includes('"') || s.includes('\n'))
+    ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function updateRowCounter() {
+  const el = document.getElementById('rowCounter'); if (!el) return;
+  const all     = document.querySelectorAll('#tBody tr[data-batch]').length;
+  const current = document.querySelectorAll('#tBody tr[data-batch="current"]').length;
+  const saved   = document.querySelectorAll('#tBody tr[data-batch="saved"]').length;
+  if (all === 0) { el.textContent = ''; return; }
+  el.innerHTML = `<strong>${current}</strong> current · <strong>${saved}</strong> saved · <strong>${all}</strong> total rows`;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   URL STRIPPING
+═══════════════════════════════════════════════════════════════ */
+function stripUrls(text) {
+  text = text.replace(/\[([^\]]*?)\]\(https?:\/\/[^)]*\)/gi, '$1');
+  text = text.replace(/https?:\/\/\S+/gi, '');
+  return text;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ZONE PARSER
+═══════════════════════════════════════════════════════════════ */
+function parseZones(text) {
+  const lines = text.split('\n');
+  const units = [];
+  const reNumbered  = /^\s{0,3}(?:#{1,3}\s+)?\d+[.)]\s+(.+)/;
+  const reBullet    = /^\s{0,3}(?:[*\-•–]|✅|👍|👉|➡️|✔️|🔹|🔸|▪|▸|►)\s+(.+)/;
+  const reTable     = /^\|.+\|/;
+  const reHeading   = /^#{1,6}\s+/;
+  const reLink      = /\[([^\]]+)\]\([^)]+\)/g;
+  const reEmptyLine = /^\s*$/;
+
+  const classified = lines.map((line, i) => {
+    if (reTable.test(line))     return { type: 'table',    line, i };
+    if (reNumbered.test(line))  return { type: 'numbered', line, i };
+    if (reBullet.test(line))    return { type: 'bullet',   line, i };
+    if (reHeading.test(line))   return { type: 'heading',  line, i };
+    if (reEmptyLine.test(line)) return { type: 'empty',    line, i };
+    return                             { type: 'prose',    line, i };
+  });
+
+  let firstStructural = Infinity, lastStructural = -1;
+  classified.forEach(({ type, i }) => {
+    if (['table','numbered','bullet'].includes(type)) {
+      if (i < firstStructural) firstStructural = i;
+      if (i > lastStructural)  lastStructural  = i;
+    }
+  });
+
+  classified.forEach(({ type, line, i }) => {
+    if (type === 'empty') return;
+    let zone;
+    if      (type === 'table')    zone = 4;
+    else if (type === 'numbered') zone = 2;
+    else if (type === 'bullet')   zone = 3;
+    else if (type === 'heading')  zone = (i < firstStructural) ? 1 : (i > lastStructural ? 5 : 3);
+    else zone = (i < firstStructural) ? 1 : 5;
+
+    let cleanLine = line; let m;
+    reLink.lastIndex = 0;
+    while ((m = reLink.exec(line)) !== null) {
+      units.push({ zone: 6, text: m[1], lineIdx: i, charOffset: m.index });
+      cleanLine = cleanLine.replace(m[0], ' ');
+    }
+    units.push({ zone, text: cleanLine, lineIdx: i, charOffset: 0 });
+  });
+  return units;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ZONE-AWARE RANKING ENGINE
+═══════════════════════════════════════════════════════════════ */
+function computeZoneRanks(brands, text) {
+  const units = parseZones(stripUrls(text));
+  const brandInfo = {};
+  brands.forEach(brand => {
+    if (!brand) return;
+    const bLower = brand.toLowerCase();
+    let best = null;
+    const bReG = new RegExp('(?<![a-z0-9])' + escRe(bLower) + '(?![a-z0-9])', 'gi');
+    units.forEach(unit => {
+      if (best) {
+        if (unit.zone > best.zone) return;
+        if (unit.zone === best.zone && unit.lineIdx > best.lineIdx) return;
+      }
+      const uLower = unit.text.toLowerCase();
+      bReG.lastIndex = 0;
+      const m = bReG.exec(uLower);
+      if (!m) return;
+      const pos = m.index;
+      const candidate = { zone: unit.zone, lineIdx: unit.lineIdx, charInLine: pos };
+      if (!best
+        || candidate.zone < best.zone
+        || (candidate.zone === best.zone && candidate.lineIdx < best.lineIdx)
+        || (candidate.zone === best.zone && candidate.lineIdx === best.lineIdx && candidate.charInLine < best.charInLine)
+      ) best = candidate;
+    });
+    if (best) brandInfo[brand] = best;
+  });
+
+  const present = Object.entries(brandInfo)
+    .map(([brand, info]) => ({ brand, ...info }))
+    .sort((a, b) => {
+      if (a.zone !== b.zone) return a.zone - b.zone;
+      if (a.lineIdx !== b.lineIdx) return a.lineIdx - b.lineIdx;
+      return a.charInLine - b.charInLine;
+    });
+
+  const rankMap = {};
+  let ec = 0, p = 0;
+  while (p < present.length) {
+    let q = p;
+    while (q < present.length && present[q].zone === present[p].zone && present[q].lineIdx === present[p].lineIdx) q++;
+    const r = ec + 1;
+    for (let k = p; k < q; k++) rankMap[present[k].brand] = r;
+    ec += (q - p); p = q;
+  }
+  return rankMap;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   WHITELIST
+═══════════════════════════════════════════════════════════════ */
+const WHITELIST = [
+  { pattern: /galaxy\s+buds/i,          parent: 'Samsung',    note: 'Galaxy Buds → Samsung (WH)'    },
+  { pattern: /galaxy\s+watch/i,         parent: 'Samsung',    note: 'Galaxy Watch → Samsung (WE)'   },
+  { pattern: /galaxy\s+[sam]\d*/i,      parent: 'Samsung',    note: 'Galaxy S/A/M → Samsung (SM)'   },
+  { pattern: /airdopes/i,               parent: 'boAt',       note: 'Airdopes → boAt (WH)'          },
+  { pattern: /rockerz/i,                parent: 'boAt',       note: 'Rockerz → boAt (WH)'           },
+  { pattern: /colorfit/i,               parent: 'Noise',      note: 'ColorFit → Noise (WE)'         },
+  { pattern: /moto\s+(?:g|edge|razr)/i, parent: 'Motorola',   note: 'Moto G/Edge/Razr → Motorola'  },
+  { pattern: /fire-boltt\s+sense/i,     parent: 'Fire-Boltt', note: 'Fire-Boltt Sense → Fire-Boltt' },
+];
+
+function applyWhitelist(brands, cleanText, lower) {
+  const result = new Map();
+  WHITELIST.forEach(({ pattern, parent }) => {
+    const matchedBrand = brands.find(b => b && b.trim().toLowerCase() === parent.toLowerCase());
+    if (!matchedBrand) return;
+    const hits = (lower.match(pattern) || []);
+    if (!hits.length) return;
+    if (parent.toLowerCase() === 'fire-boltt') {
+      if (!/fire-boltt/i.test(lower)) return;
+    }
+    const parentPresent = new RegExp('(?<![a-z0-9])' + escRe(matchedBrand.toLowerCase()) + '(?![a-z0-9])').test(lower);
+    if (!result.has(matchedBrand)) result.set(matchedBrand, { hit: false, extra: 0 });
+    const entry = result.get(matchedBrand);
+    if (!parentPresent) { entry.hit = true; entry.extra += hits.length; }
+    else entry.extra += hits.length;
+  });
+  return result;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FULL ANALYSIS ENGINE
+═══════════════════════════════════════════════════════════════ */
+function analyse(brands, text) {
+  const cleanText = stripUrls(text);
+  const lower     = cleanText.toLowerCase();
+  const allBrands = brands.filter(Boolean);
+  const wlMap     = applyWhitelist(allBrands, cleanText, lower);
+  const rankMap   = computeZoneRanks(allBrands, cleanText);
+
+  wlMap.forEach((entry, brand) => {
+    if (entry.hit && rankMap[brand] === undefined) {
+      const wlEntries = WHITELIST.filter(e => e.parent.toLowerCase() === brand.toLowerCase());
+      let bestRank;
+      wlEntries.forEach(({ pattern }) => {
+        const proxy = cleanText.replace(pattern, brand);
+        const proxyRank = computeZoneRanks([brand], proxy)[brand];
+        if (proxyRank !== undefined && (bestRank === undefined || proxyRank < bestRank)) bestRank = proxyRank;
+      });
+      if (bestRank !== undefined) rankMap[brand] = bestRank;
+    }
+  });
+
+  (function refineClauseRanks() {
+    const rank1Brands = Object.entries(rankMap).filter(([,r]) => r === 1).map(([b]) => b);
+    if (rank1Brands.length <= 1) return;
+    const lowerCT = cleanText.toLowerCase();
+    function firstPos(brand) {
+      const re = new RegExp('(?<![a-z0-9])' + escRe(brand.toLowerCase()) + '(?![a-z0-9])', 'i');
+      const m = re.exec(lowerCT); return m ? m.index : Infinity;
+    }
+    const ranked1 = rank1Brands.map(b => ({ brand: b, pos: firstPos(b) })).sort((a, b) => a.pos - b.pos);
+    if (!ranked1.length || ranked1[0].pos === Infinity) return;
+    const units = parseZones(cleanText);
+    let firstBrandZone = 1;
+    for (const unit of units) {
+      const re = new RegExp('(?<![a-z0-9])' + escRe(ranked1[0].brand.toLowerCase()) + '(?![a-z0-9])', 'i');
+      if (re.test(unit.text.toLowerCase())) { firstBrandZone = unit.zone; break; }
+    }
+    if (firstBrandZone >= 2 && firstBrandZone <= 4) return;
+    const clauseEndRe = /[.\n!?]/g;
+    clauseEndRe.lastIndex = ranked1[0].pos;
+    const clauseEndMatch = clauseEndRe.exec(lowerCT);
+    const clauseEnd = clauseEndMatch ? clauseEndMatch.index : lowerCT.length;
+    let clauseStart = 0;
+    for (let i = ranked1[0].pos - 1; i >= 0; i--) {
+      if (['.', '\n', '!', '?'].includes(lowerCT[i])) { clauseStart = i + 1; break; }
+    }
+    const inClause  = ranked1.filter(({ pos }) => pos >= clauseStart && pos <= clauseEnd);
+    const outClause = ranked1.filter(({ pos }) => pos < clauseStart || pos > clauseEnd);
+    if (outClause.length === 0) return;
+    const newRankMap = {};
+    inClause.forEach(({ brand }) => { newRankMap[brand] = 1; });
+    const others = Object.entries(rankMap)
+      .filter(([b]) => !inClause.some(ic => ic.brand === b))
+      .map(([b, r]) => ({ brand: b, origRank: r, pos: firstPos(b) }))
+      .sort((a, b) => a.origRank !== b.origRank ? a.origRank - b.origRank : a.pos - b.pos);
+    let ec = inClause.length, p = 0;
+    while (p < others.length) {
+      let q = p;
+      while (q < others.length && others[q].origRank === others[p].origRank) q++;
+      const r = ec + 1;
+      for (let k = p; k < q; k++) newRankMap[others[k].brand] = r;
+      ec += (q - p); p = q;
+    }
+    Object.keys(newRankMap).forEach(b => { rankMap[b] = newRankMap[b]; });
+  })();
+
+  function boundaryRe(b) {
+    return new RegExp('(?<![a-z0-9])' + escRe(b.toLowerCase()) + '(?![a-z0-9])', 'gi');
+  }
+  function countOcc(b) { return (lower.match(boundaryRe(b)) || []).length; }
+  function directMatch(b) { return boundaryRe(b).test(lower); }
+
+  return brands.map((brand, slot) => {
+    if (!brand) return null;
+    const wl = wlMap.get(brand) || { hit: false, extra: 0 };
+    const directPresent = directMatch(brand);
+    const binary = (directPresent || wl.hit) ? 1 : 0;
+    const count  = countOcc(brand) + wl.extra;
+    const rank   = rankMap[brand] !== undefined ? rankMap[brand] : '';
+    const score  = binary === 1 && rank !== '' ? (1 / rank).toFixed(3) : '0';
+    return { slot, brand, binary, count, rank, score };
+  }).filter(Boolean);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LEGEND
+═══════════════════════════════════════════════════════════════ */
+function updateLegend() {
+  const row = document.getElementById('legendRow');
+  row.innerHTML = '';
+  getBrands().forEach((b, i) => {
+    if (!b) return;
+    const chip = document.createElement('div'); chip.className = 'chip';
+    chip.style.background = COLOURS[i] + '55';
+    const sq = document.createElement('span'); sq.className = 'chip-sq'; sq.style.background = COLOURS[i];
+    chip.appendChild(sq); chip.appendChild(document.createTextNode(b));
+    chip.dataset.slot = i; chip.style.cursor = 'pointer';
+    chip.title = 'Click to enter highlight mode for ' + b;
+    chip.addEventListener('click', () => toggleHighlightMode(i));
+    row.appendChild(chip);
+  });
+  unlistedBrands.forEach(b => {
+    const chip = document.createElement('div'); chip.className = 'chip unlisted';
+    chip.style.background = '#e0e7ff88';
+    const sq = document.createElement('span'); sq.className = 'chip-sq';
+    sq.style.background = '#e0e7ff'; sq.style.border = '1.5px dashed #6366f1';
+    chip.appendChild(sq); chip.appendChild(document.createTextNode(b + ' ✦'));
+    row.appendChild(chip);
+  });
+  updateHighlightModeUI();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TEXT RENDERER
+═══════════════════════════════════════════════════════════════ */
+function renderText() {
+  const el = document.getElementById('textDisplay');
+  if (!fileText) {
+    el.className = 'td-placeholder';
+    el.innerHTML = 'Upload a TXT file to view its contents here.';
+    return;
+  }
+  el.className = '';
+  const brands = getBrands();
+  const n = fileText.length;
+  const hl = new Int16Array(n).fill(-1);
+
+  const mdLinkRe = /\[([^\]]*?)\]\((https?:\/\/[^)]*)\)/gi;
+  let m;
+  while ((m = mdLinkRe.exec(fileText)) !== null) {
+    const urlStart = m.index + 1 + m[1].length + 2;
+    const urlEnd   = m.index + m[0].length;
+    for (let c = urlStart; c < urlEnd && c < n; c++) hl[c] = -2;
+  }
+  const bareUrlRe = /https?:\/\/\S+/gi;
+  while ((m = bareUrlRe.exec(fileText)) !== null) {
+    for (let c = m.index; c < m.index + m[0].length && c < n; c++) hl[c] = -2;
+  }
+
+  for (let bi = 0; bi < N_BRANDS; bi++) {
+    if (!brands[bi]) continue;
+    const src = fileText.toLowerCase();
+    const hlRe = new RegExp('(?<![a-z0-9])' + escRe(brands[bi].toLowerCase()) + '(?![a-z0-9])', 'gi');
+    let m2;
+    while ((m2 = hlRe.exec(src)) !== null) {
+      const pos = m2.index, len = m2[0].length;
+      let blocked = false;
+      for (let c = pos; c < pos + len; c++) { if (hl[c] !== -1) { blocked = true; break; } }
+      if (!blocked) for (let c = pos; c < pos + len; c++) hl[c] = bi;
+    }
+  }
+
+  WHITELIST.forEach(({ pattern, parent }) => {
+    const parentIdx = brands.findIndex(b => b && b.trim().toLowerCase() === parent.toLowerCase());
+    if (parentIdx === -1) return;
+    const reG = new RegExp(pattern.source, 'gi');
+    let match;
+    while ((match = reG.exec(fileText)) !== null) {
+      const pos = match.index, len = match[0].length;
+      let blocked = false;
+      for (let c = pos; c < pos + len; c++) { if (hl[c] !== -1) { blocked = true; break; } }
+      if (!blocked) for (let c = pos; c < pos + len; c++) hl[c] = parentIdx;
+    }
+  });
+
+  unlistedBrands.forEach(brand => {
+    const target = brand.toLowerCase(), src = fileText.toLowerCase();
+    let idx = 0;
+    while (idx < n) {
+      const pos = src.indexOf(target, idx); if (pos === -1) break;
+      let blocked = false;
+      for (let c = pos; c < pos + brand.length; c++) { if (hl[c] !== -1) { blocked = true; break; } }
+      if (!blocked) for (let c = pos; c < pos + brand.length; c++) hl[c] = 99;
+      idx = pos + brand.length;
+    }
+  });
+
+  suppressions.forEach(({ slot, start, end }) => {
+    for (let c = start; c < end && c < n; c++) { if (hl[c] === slot) hl[c] = -1; }
+  });
+
+  const mhMap = new Int16Array(n).fill(-1);
+  manualHighlights.forEach(({ slot, start, end }, idx) => {
+    for (let c = start; c < end && c < n; c++) {
+      if (hl[c] !== -2) { hl[c] = slot; mhMap[c] = idx; }
+    }
+  });
+
+  let html = '', i = 0;
+  while (i < n) {
+    const slot = hl[i];
+    if (slot === -2) {
+      let j = i; while (j < n && hl[j] === -2) j++;
+      html += `<span style="color:#94a3b8;">${escHtml(fileText.slice(i, j))}</span>`; i = j;
+    } else if (slot === -1) {
+      let j = i; while (j < n && hl[j] === -1) j++;
+      html += escHtml(fileText.slice(i, j)); i = j;
+    } else if (slot === 99) {
+      let j = i; while (j < n && hl[j] === 99) j++;
+      html += `<span class="hl-unlisted" title="Unlisted brand">${escHtml(fileText.slice(i,j))}</span>`; i = j;
+    } else {
+      const runSlot = slot;
+      let j = i; while (j < n && hl[j] === runSlot) j++;
+      const mhIdx = mhMap[i];
+      let dataAttr = mhIdx >= 0
+        ? ` data-mh-idx="${mhIdx}"`
+        : ` data-auto-slot="${runSlot}" data-auto-start="${i}" data-auto-end="${j}"`;
+      const txtCol = COLOUR_TEXT[runSlot] || '#000';
+      html += `<span style="background:${COLOURS[runSlot]};color:${txtCol};border-radius:2px;"${dataAttr}>${escHtml(fileText.slice(i,j))}</span>`; i = j;
+    }
+  }
+  el.innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TABLE HELPERS — CELL-LEVEL YN TOGGLE BUTTONS
+═══════════════════════════════════════════════════════════════ */
+
+/**
+ * makeYnToggleTd(val, isCrossOrProd)
+ * Creates a TD with three inline toggle buttons: Y / N / NA
+ * All columns use the same look; Cross/Prod stay individually editable (same behaviour).
+ */
+function makeYnToggleTd(val) {
+  const td = document.createElement('td');
+  td.className = 'col-yn-cell';
+  td.dataset.ynval = val || '';
+  const wrap = document.createElement('div');
+  wrap.className = 'cell-yn-wrap';
+
+  ['Y','N','NA'].forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'cell-yn-btn ' + opt.toLowerCase().replace('na','na') + '-btn';
+    // map to correct CSS class
+    if (opt === 'Y')  btn.className = 'cell-yn-btn y-btn';
+    if (opt === 'N')  btn.className = 'cell-yn-btn n-btn';
+    if (opt === 'NA') btn.className = 'cell-yn-btn na-btn';
+    btn.textContent = opt;
+    btn.dataset.val = opt;
+    if (val === opt) btn.classList.add('active');
+    btn.addEventListener('click', () => {
+      const current = td.dataset.ynval;
+      // Toggle off if clicking the same active button
+      const newVal = (current === opt) ? '' : opt;
+      td.dataset.ynval = newVal;
+      wrap.querySelectorAll('.cell-yn-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.val === newVal);
+      });
+    });
+    wrap.appendChild(btn);
+  });
+
+  td.appendChild(wrap);
+  return td;
+}
+
+/** makeYnCrossTd — same as makeYnToggleTd but class is col-cross-cell */
+function makeYnCrossTd(val) {
+  const td = makeYnToggleTd(val);
+  td.className = 'col-cross-cell';
+  return td;
+}
+
+function getYnVal(td) {
+  if (!td) return '';
+  return td.dataset.ynval || '';
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MASS TIE
+═══════════════════════════════════════════════════════════════ */
+function computeMassTie(brandRankPairs) {
+  const rankGroups = {};
+  brandRankPairs.forEach(({ brand, rank }) => {
+    if (rank === '' || rank === undefined) return;
+    if (!rankGroups[rank]) rankGroups[rank] = [];
+    rankGroups[rank].push(brand);
+  });
+  let massTieBrandList = '', hasMassTie = false;
+  Object.values(rankGroups).forEach(group => {
+    if (group.length >= 5) {
+      hasMassTie = true;
+      if (massTieBrandList) massTieBrandList += ', ';
+      massTieBrandList += group.join(', ');
+    }
+  });
+  const result = new Map();
+  brandRankPairs.forEach(({ brand }) => {
+    result.set(brand, { massTie: hasMassTie ? '1' : '0', massTieBrands: hasMassTie ? massTieBrandList : '' });
+  });
+  return result;
+}
+
+function makeTd(text, cls) {
+  const td = document.createElement('td');
+  td.contentEditable = 'true';
+  td.textContent = String(text == null ? '' : text);
+  if (cls) td.className = cls;
+  return td;
+}
+
+function appendBatchRows(rid, results, unlistedStr) {
+  const tbody = document.getElementById('tBody');
+  document.getElementById('emptyRow')?.remove();
+  tbody.querySelectorAll('tr[data-batch="current"]').forEach(tr => tr.dataset.batch = 'saved');
+  const cat = document.getElementById('catSel').value;
+  const rowsToInsert = [];
+
+  results.forEach(({ slot, brand, binary, count, rank, score }) => {
+    const tr = document.createElement('tr');
+    tr.dataset.batch = 'current'; tr.dataset.slot = slot;
+
+    const tdRid = makeTd(rid, 'rid-cell'); tdRid.style.borderLeftColor = COLOURS[slot];
+    tr.appendChild(tdRid);
+    tr.appendChild(makeTd(cat));
+    tr.appendChild(makeTd(brand));
+    const tdABC = makeTd(''); tdABC.classList.add('abc-cell'); tr.appendChild(tdABC);
+    tr.appendChild(makeTd(String(binary)));
+    tr.appendChild(makeTd(String(count)));
+    tr.appendChild(makeTd(rank  !== '' ? String(rank)  : ''));
+    tr.appendChild(makeTd(score !== '' ? String(score) : ''));
+    // col[8] Truncated_YN
+    tr.appendChild(makeYnToggleTd(''));
+    // col[9] Visual_Only_YN
+    tr.appendChild(makeYnToggleTd(''));
+    // col[10] Hindi_Response_YN
+    tr.appendChild(makeYnToggleTd(''));
+    // col[11] Mass_Tie_YN — col[12] Mass_Tie_YN(Brands)
+    const tdMT = makeTd(''); tdMT.classList.add('col-masstie-cell'); tr.appendChild(tdMT);
+    const tdMTB = makeTd(''); tdMTB.classList.add('col-masstiebrand-cell'); tr.appendChild(tdMTB);
+    // col[13] Cross_Category_YN
+    tr.appendChild(makeYnCrossTd(''));
+    // col[14] Product_Line_Only_YN
+    tr.appendChild(makeYnToggleTd(''));
+    // col[15] Unlisted_Brands
+    const tdUL = makeTd(unlistedStr || ''); tdUL.classList.add('col-unlisted-cell'); tr.appendChild(tdUL);
+    // col[16] Notes
+    const tdNotes = document.createElement('td');
+    tdNotes.contentEditable = 'true'; tdNotes.className = 'col-notes-cell';
+    tr.appendChild(tdNotes);
+
+    rowsToInsert.push(tr);
+  });
+
+  // Compute mass tie
+  const mtPairs = results.map(r => ({ brand: r.brand, rank: r.rank !== undefined && r.rank !== '' ? String(r.rank) : '' }));
+  const mtMap = computeMassTie(mtPairs);
+  rowsToInsert.forEach(tr => {
+    const brandCell = tr.querySelectorAll('td')[2];
+    const brand = brandCell ? brandCell.textContent : '';
+    const mt = mtMap.get(brand);
+    if (mt) {
+      const cells = tr.querySelectorAll('td');
+      if (cells[11]) cells[11].textContent = mt.massTie;
+      if (cells[12]) cells[12].textContent = mt.massTieBrands;
+    }
+  });
+
+  rowsToInsert.reverse().forEach(tr => tbody.prepend(tr));
+  updateRowCounter();
+}
+
+function recomputeCurrentBatch() {
+  if (!fileText) return;
+  const tbody     = document.getElementById('tBody');
+  const batchRows = Array.from(tbody.querySelectorAll('tr[data-batch="current"]'));
+  if (!batchRows.length) return;
+
+  const brands   = getBrands();
+  const cat      = document.getElementById('catSel').value;
+  const results  = analyse(brands, fileText);
+  const needed   = new Set(results.map(r => String(r.slot)));
+  const allCount = document.getElementById('allCount').value.trim();
+
+  batchRows.forEach(tr => { if (!needed.has(tr.dataset.slot)) tr.remove(); });
+
+  results.forEach(({ slot, brand, binary, count, rank, score }) => {
+    let tr = tbody.querySelector(`tr[data-batch="current"][data-slot="${slot}"]`);
+    if (tr) {
+      const c = tr.querySelectorAll('td');
+      c[1].textContent = cat; c[2].textContent = brand;
+      c[0].style.borderLeftColor = COLOURS[slot];
+      const manualExtra = manualHighlights.filter(h => h.slot === slot).length;
+      const suppressed  = suppressions.filter(s => s.slot === slot).length;
+      const finalCount  = Math.max(0, count - suppressed) + manualExtra;
+      const finalBinary = binary === 1 || manualExtra > 0 ? 1 : 0;
+      c[4].textContent = String(finalBinary);
+      c[5].textContent = String(finalCount);
+      let effectiveRank = rank, effectiveScore = score;
+      if (manualExtra > 0 && rank === '') {
+        const myHL = manualHighlights.filter(h => h.slot === slot).sort((a,b)=>a.start-b.start);
+        if (myHL.length > 0) {
+          const allPresent = getBrands().filter(Boolean);
+          const synText = fileText.slice(0, myHL[0].start) + brand + fileText.slice(myHL[0].end);
+          const synRankMap = computeZoneRanks(allPresent, synText);
+          if (synRankMap[brand] !== undefined) {
+            effectiveRank = synRankMap[brand];
+            effectiveScore = (1 / effectiveRank).toFixed(3);
+          }
+        }
+      }
+      c[6].textContent = effectiveRank !== '' ? String(effectiveRank) : '';
+      c[7].textContent = finalBinary === 1 && effectiveRank !== '' ? String(effectiveScore) : '0';
+    } else {
+      tr = document.createElement('tr');
+      tr.dataset.batch = 'current'; tr.dataset.slot = slot;
+      const tdRid = makeTd(currentRID, 'rid-cell'); tdRid.style.borderLeftColor = COLOURS[slot];
+      tr.appendChild(tdRid); tr.appendChild(makeTd(cat)); tr.appendChild(makeTd(brand));
+      const tdABC = makeTd(allCount); tdABC.classList.add('abc-cell'); tr.appendChild(tdABC);
+      const manualExtra = manualHighlights.filter(h => h.slot === slot).length;
+      const suppressed  = suppressions.filter(s => s.slot === slot).length;
+      const finalBinary = (binary === 1 || manualExtra > 0) ? 1 : 0;
+      const finalCount  = Math.max(0, count - suppressed) + manualExtra;
+      let newRowRank = rank, newRowScore = score;
+      if (manualExtra > 0 && rank === '') {
+        const myHL = manualHighlights.filter(h => h.slot === slot).sort((a,b)=>a.start-b.start);
+        if (myHL.length > 0) {
+          const allPresent = getBrands().filter(Boolean);
+          const synText = fileText.slice(0, myHL[0].start) + brand + fileText.slice(myHL[0].end);
+          const synRankMap = computeZoneRanks(allPresent, synText);
+          if (synRankMap[brand] !== undefined) { newRowRank = synRankMap[brand]; newRowScore = (1/newRowRank).toFixed(3); }
+        }
+      }
+      tr.appendChild(makeTd(String(finalBinary))); tr.appendChild(makeTd(String(finalCount)));
+      tr.appendChild(makeTd(newRowRank !== '' ? String(newRowRank) : ''));
+      tr.appendChild(makeTd(finalBinary === 1 && newRowRank !== '' ? String(newRowScore) : '0'));
+      tr.appendChild(makeYnToggleTd('')); // col[8] Truncated
+      tr.appendChild(makeYnToggleTd('')); // col[9] Visual
+      tr.appendChild(makeYnToggleTd('')); // col[10] Hindi
+      const nrMT = makeTd(''); nrMT.classList.add('col-masstie-cell'); tr.appendChild(nrMT);
+      const nrMTB = makeTd(''); nrMTB.classList.add('col-masstiebrand-cell'); tr.appendChild(nrMTB);
+      tr.appendChild(makeYnCrossTd(''));   // col[13] Cross
+      tr.appendChild(makeYnToggleTd('')); // col[14] ProdLine
+      const nrUL = makeTd(unlistedBrands.join(', ')); nrUL.classList.add('col-unlisted-cell'); tr.appendChild(nrUL);
+      const nrNotes = document.createElement('td'); nrNotes.contentEditable = 'true'; nrNotes.className = 'col-notes-cell'; tr.appendChild(nrNotes);
+
+      const currentRows = Array.from(tbody.querySelectorAll('tr[data-batch="current"]'));
+      const insertBefore = currentRows.find(r => Number(r.dataset.slot) > slot);
+      if (insertBefore) tbody.insertBefore(tr, insertBefore);
+      else {
+        const lastCurrent = currentRows[currentRows.length - 1];
+        if (lastCurrent && lastCurrent.nextSibling) tbody.insertBefore(tr, lastCurrent.nextSibling);
+        else tbody.appendChild(tr);
+      }
+    }
+  });
+
+  // Recompute mass tie
+  const currentBatchRows = Array.from(tbody.querySelectorAll('tr[data-batch="current"]'));
+  const mtPairsLive = currentBatchRows.map(tr => {
+    const c = tr.querySelectorAll('td');
+    return { brand: c[2]?.textContent || '', rank: c[6]?.textContent || '' };
+  });
+  const mtMapLive = computeMassTie(mtPairsLive);
+  currentBatchRows.forEach(tr => {
+    const c = tr.querySelectorAll('td');
+    const brand = c[2]?.textContent || '';
+    const mt = mtMapLive.get(brand);
+    if (mt) {
+      if (c[11]) c[11].textContent = mt.massTie;
+      if (c[12]) c[12].textContent = mt.massTieBrands;
+    }
+  });
+
+  if (!tbody.querySelector('tr[data-batch]')) {
+    const e = document.createElement('tr'); e.id = 'emptyRow';
+    e.innerHTML = '<td colspan="17" class="empty-msg">No data yet.</td>';
+    tbody.appendChild(e);
+  }
+  updateRowCounter();
+}
+
+function onBrandOrCategoryChange() {
+  clearTimeout(_debounceTimer);
+  _debounceTimer = setTimeout(() => {
+    updateLegend(); renderText(); recomputeCurrentBatch();
+  }, 120);
+}
+
+function syncAllCount() {
+  const val = document.getElementById('allCount').value.trim();
+  document.querySelectorAll('#tBody tr[data-batch="current"] .abc-cell').forEach(td => {
+    td.textContent = val;
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FILE UPLOAD
+═══════════════════════════════════════════════════════════════ */
+function handleFileUpload(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const brands = getBrands().filter(Boolean);
+  if (!brands.length) { alert('Please enter at least one brand name before uploading.'); e.target.value = ''; return; }
+  const rid = file.name.replace(/\.txt$/i, '');
+  currentRID = rid; unlistedBrands = []; detectedCandidates = []; selectedCandidates = new Set();
+  manualHighlights = []; suppressions = []; activeHighlightSlot = -1;
+  updateHighlightModeUI();
+  const badge = document.getElementById('fileBadge');
+  badge.textContent = 'Loaded: ' + file.name; badge.className = 'file-badge loaded';
+  document.getElementById('candidateTags').innerHTML = '<span class="no-candidates">Run detection to see candidates here.</span>';
+  document.getElementById('applyBtn').disabled = true;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    fileText = ev.target.result.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    renderText();
+    const results = analyse(getBrands(), fileText);
+    appendBatchRows(rid, results, '');
+    document.getElementById('allCount').value = '';
+    document.getElementById('detectBtn').disabled = false;
+    document.getElementById('pdfBtn').disabled = true;
+    const ps = document.getElementById('pdfStatus');
+    ps.style.display = 'inline'; ps.style.color = '#b45309';
+    ps.textContent = 'Save analysis first to unlock PDF download.';
+    setDetectStatus('File loaded. Click "Detect Brands in Text" to find unlisted brands.', '');
+    updateLegend();
+  };
+  reader.onerror = () => { alert('Error reading file.'); e.target.value = ''; };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HEURISTIC BRAND DETECTOR
+═══════════════════════════════════════════════════════════════ */
+function detectBrands() {
+  if (!fileText) return;
+  const brands  = getBrands().filter(Boolean).map(b => b.toLowerCase());
+  const text    = stripUrls(fileText);
+  const tokenRe = /\b([A-Z][a-zA-Z0-9\-&'.]{1,}(?:\s+[A-Z][a-zA-Z0-9\-&'.]{1,}){0,2})\b/g;
+  const freqMap = {};
+  let m;
+  while ((m = tokenRe.exec(text)) !== null) {
+    const raw = m[1].trim(), lower = raw.toLowerCase();
+    if (STOPWORDS.has(raw) || STOPWORDS.has(lower)) continue;
+    if (brands.includes(lower)) continue;
+    if (raw.length <= 2 || /^\d+$/.test(raw)) continue;
+    const before = text.slice(Math.max(0, m.index - 3), m.index);
+    const sentenceStart = /[.!?\n]\s*$/.test(before) || m.index === 0;
+    if (!freqMap[lower]) freqMap[lower] = { display: raw, count: 0, sentenceOnly: true };
+    freqMap[lower].count++;
+    if (!sentenceStart) freqMap[lower].sentenceOnly = false;
+    if (raw !== raw.toLowerCase()) freqMap[lower].display = raw;
+  }
+  const candidates = [];
+  for (const [lower, info] of Object.entries(freqMap)) {
+    if (info.sentenceOnly && info.count === 1) continue;
+    const score = info.count + (info.sentenceOnly ? 0 : 2);
+    if (score < 2) continue;
+    const words = lower.split(/\s+/);
+    if (words.every(w => STOPWORDS.has(w))) continue;
+    candidates.push({ display: info.display, lower, count: info.count, score });
+  }
+  candidates.sort((a, b) => b.score - a.score);
+  const top = candidates.slice(0, 30);
+  detectedCandidates = top;
+  selectedCandidates = new Set(top.filter(c => c.count >= 2).map(c => c.lower));
+  renderCandidateTags(top);
+  const n = top.length;
+  setDetectStatus(n > 0
+    ? `✓ Found ${n} candidate${n!==1?'s':''} — toggle to include/exclude, then click Apply.`
+    : 'No unlisted brand candidates found in this text.', n > 0 ? 'ok' : '');
+  document.getElementById('applyBtn').disabled = top.length === 0;
+}
+
+function renderCandidateTags(candidates) {
+  const box = document.getElementById('candidateTags');
+  box.innerHTML = '';
+  if (!candidates.length) { box.innerHTML = '<span class="no-candidates">No candidates found.</span>'; return; }
+  candidates.forEach(c => {
+    const tag = document.createElement('span');
+    tag.className = 'ctag' + (selectedCandidates.has(c.lower) ? ' selected' : '');
+    tag.title = c.manual ? 'Manually added' : `Appears ${c.count} time${c.count!==1?'s':''}`;
+    tag.textContent = c.display;
+    const cnt = document.createElement('span'); cnt.className = 'x';
+    cnt.textContent = c.manual ? '✎' : '×' + c.count;
+    tag.appendChild(cnt);
+    tag.addEventListener('click', () => {
+      if (selectedCandidates.has(c.lower)) selectedCandidates.delete(c.lower);
+      else selectedCandidates.add(c.lower);
+      tag.classList.toggle('selected');
+    });
+    box.appendChild(tag);
+  });
+}
+
+function applySelected() {
+  if (!fileText) return;
+  const confirmed = detectedCandidates.filter(c => selectedCandidates.has(c.lower)).map(c => c.display);
+  if (confirmed.length === 0) {
+    const ok = confirm('No candidates are selected. Applying will clear the Unlisted_Brands column. Continue?');
+    if (!ok) return;
+  }
+  unlistedBrands = confirmed;
+  const brands    = getBrands().filter(Boolean);
+  const lowerText = fileText.toLowerCase();
+  const listedPresent = brands.filter(b =>
+    new RegExp('(?<![a-z0-9])' + escRe(b.toLowerCase()) + '(?![a-z0-9])').test(lowerText)
+  ).length;
+  const allCount = listedPresent + confirmed.length;
+  document.getElementById('allCount').value = allCount;
+  const unlistedStr = confirmed.join(', ');
+  document.querySelectorAll('#tBody tr[data-batch="current"] .col-unlisted-cell')
+    .forEach(td => { td.textContent = unlistedStr; });
+  syncAllCount(); updateLegend(); renderText();
+  setDetectStatus(`✓ Applied ${confirmed.length} unlisted brand${confirmed.length!==1?'s':''}. ALL_brand_count = ${allCount}.`, 'ok');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PDF DOWNLOAD
+   Header: RID · Analyst · Date  — tiny telegraphic, top-left only
+   Highlights: single flat yellow (#FFD700) for all brands & unlisted
+   Table: plain, no colour strips, no alternating fills
+═══════════════════════════════════════════════════════════════ */
+// Helper: parse a CSS hex colour string → [r,g,b]  (3- or 6-digit, with or without #)
+function hexToRgb(hex) {
+  hex = (hex || '').replace('#', '').trim();
+  if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+  if (hex.length !== 6) return [0, 0, 0];
+  return [parseInt(hex.slice(0,2),16), parseInt(hex.slice(2,4),16), parseInt(hex.slice(4,6),16)];
+}
+
+function downloadHighlightedPDF() {
+  if (!fileText) return;
+  const btn    = document.getElementById('pdfBtn');
+  const status = document.getElementById('pdfStatus');
+  btn.disabled = true;
+  status.style.display = 'inline'; status.style.color = '#64748b';
+  status.textContent = 'Building PDF…';
+
+  if (typeof window.jspdf === 'undefined') {
+    status.textContent = 'PDF library not ready — wait a moment and try again.';
+    status.style.color = '#dc2626'; btn.disabled = false; return;
+  }
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const pageW = 297, pageH = 210, margin = 12, maxX = pageW - margin;
+    const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+    // ── Telegraphic header: RID (bold) · Analyst · Date ──
+    // Printed top-left of every page. No line. No band. Nothing else.
+    const analystName = (document.getElementById('analystName').value || '').trim();
+    const todayStr = (() => {
+      const d = new Date();
+      return String(d.getDate()).padStart(2,'0') + ' ' +
+        d.toLocaleString('en-IN', { month: 'short' }) + ' ' + d.getFullYear();
+    })();
+    const suffixParts  = [analystName, todayStr].filter(Boolean);
+    const headerSuffix = suffixParts.length ? '  \u00B7  ' + suffixParts.join('  \u00B7  ') : '';
+
+    // Draws header on the current page — RID bold, rest normal, no line
+    function drawHeader() {
+      const hY = margin + 2.5;
+      pdf.setFontSize(6);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(70, 70, 70);
+      pdf.text(currentRID, margin, hY);
+      if (headerSuffix) {
+        const ridW = pdf.getTextWidth(currentRID);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(155, 155, 155);
+        pdf.text(headerSuffix, margin + ridW, hY);
+      }
+    }
+
+    // ─────────────────────────────────────────────
+    //  PAGE 1: ANALYSIS SUMMARY TABLE
+    // ─────────────────────────────────────────────
+    drawHeader();
+
+    // Collect current-batch data
+    const tableRows = [];
+    document.querySelectorAll('#tBody tr[data-batch="current"]').forEach(tr => {
+      const c = tr.querySelectorAll('td');
+      tableRows.push([
+        c[2]?.textContent ?? '',   // Brand
+        c[3]?.textContent ?? '',   // ALL_brand_count
+        c[4]?.textContent ?? '',   // Binary
+        c[5]?.textContent ?? '',   // Mentions
+        c[6]?.textContent ?? '',   // Rank
+        c[7]?.textContent ?? '',   // Score
+        getYnVal(c[8]),            // Truncated
+        getYnVal(c[9]),            // Visual
+        getYnVal(c[10]),           // Hindi
+        c[11]?.textContent ?? '',  // MassTie
+        c[12]?.textContent ?? '',  // Tie Brands
+        getYnVal(c[13]),           // Cross Cat
+        getYnVal(c[14]),           // Prod Line
+        c[15]?.textContent ?? '',  // Unlisted
+        c[16]?.textContent ?? '',  // Notes
+      ]);
+    });
+
+    const colDefs = [
+      { h: 'Brand',      w: 0.10, a: 'left'   },
+      { h: 'All',        w: 0.03, a: 'center' },
+      { h: 'Bin',        w: 0.03, a: 'center' },
+      { h: 'Count',      w: 0.04, a: 'center' },
+      { h: 'Rank',       w: 0.04, a: 'center' },
+      { h: 'Score',      w: 0.05, a: 'center' },
+      { h: 'Trunc',      w: 0.04, a: 'center' },
+      { h: 'Visual',     w: 0.04, a: 'center' },
+      { h: 'Hindi',      w: 0.04, a: 'center' },
+      { h: 'MTie',       w: 0.03, a: 'center' },
+      { h: 'Tie Brands', w: 0.11, a: 'left'   },
+      { h: 'Cross',      w: 0.04, a: 'center' },
+      { h: 'ProdLine',   w: 0.05, a: 'center' },
+      { h: 'Unlisted',   w: 0.16, a: 'left'   },
+      { h: 'Notes',      w: 0.20, a: 'left'   },
+    ];
+
+    const usableW  = pageW - margin * 2;
+    const colWidths = colDefs.map(c => c.w * usableW);
+    const tblRowH  = 5.0, hdrH = 5.5;
+
+    // Start table just below header text
+    let tY = margin + 7;
+
+    // Header row — plain light background, no colour per column
+    pdf.setFillColor(245, 245, 245);
+    pdf.rect(margin, tY, usableW, hdrH, 'F');
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(6);
+    pdf.setTextColor(100, 100, 100);
+    let cx = margin;
+    colDefs.forEach((col, ci) => {
+      const cw = colWidths[ci];
+      const tx = col.a === 'center' ? cx + cw/2 : cx + 1;
+      pdf.text(col.h, tx, tY + 3.8, { align: col.a });
+      cx += cw;
+    });
+    // Single bottom border on header
+    pdf.setDrawColor(200, 200, 200); pdf.setLineWidth(0.25);
+    pdf.line(margin, tY + hdrH, maxX, tY + hdrH);
+    tY += hdrH;
+
+    // Data rows — white background, single row-divider line, black text
+    pdf.setFont('helvetica', 'normal'); pdf.setFontSize(6.5);
+    tableRows.forEach((row) => {
+      pdf.setFillColor(255, 255, 255);
+      pdf.rect(margin, tY, usableW, tblRowH, 'F');
+      pdf.setDrawColor(235, 235, 235); pdf.setLineWidth(0.12);
+      pdf.line(margin, tY + tblRowH, maxX, tY + tblRowH);
+      pdf.setTextColor(30, 30, 30);
+      let cxr = margin;
+      colDefs.forEach((col, ci) => {
+        const cw = colWidths[ci];
+        const rawVal = String(row[ci] ?? '');
+        const maxChars = Math.floor(cw / 1.4);
+        const val = rawVal.length > maxChars ? rawVal.slice(0, maxChars - 1) + '…' : rawVal;
+        const tx = col.a === 'center' ? cxr + cw/2 : cxr + 1;
+        pdf.text(val, tx, tY + 3.5, { align: col.a });
+        cxr += cw;
+      });
+      tY += tblRowH;
+    });
+
+    // Outer border — single thin rectangle
+    pdf.setDrawColor(200, 200, 200); pdf.setLineWidth(0.25);
+    pdf.rect(margin, margin + 7, usableW, tY - (margin + 7), 'S');
+
+    // ─────────────────────────────────────────────
+    //  PAGE 2+: RESPONSE TEXT
+    //  Exact highlight colours from the rendered textDisplay DOM.
+    //  Text is taken verbatim — every character exactly as shown on screen.
+    // ─────────────────────────────────────────────
+    pdf.addPage();
+
+    // Each segment: { text, bgRgb: [r,g,b]|null, fgRgb: [r,g,b] }
+    //   bgRgb null  → no highlight background
+    //   fgRgb       → exact text colour
+    const segments = [];
+    const displayEl = document.getElementById('textDisplay');
+
+    function walkNode(node) {
+      if (node.nodeType === 3) {
+        // Plain text node — no highlight
+        const t = node.textContent;
+        if (t) segments.push({ text: t, bgRgb: null, fgRgb: [30, 30, 30] });
+        return;
+      }
+      if (node.nodeType !== 1) return; // skip non-element, non-text nodes
+
+      const style      = node.getAttribute('style') || '';
+      const isUnlisted = node.classList && node.classList.contains('hl-unlisted');
+
+      // Extract background colour from inline style
+      const bgMatch = style.match(/background\s*:\s*(#[0-9a-fA-F]{3,6})/);
+      // Extract foreground colour from inline style
+      const fgMatch = style.match(/(?:^|;)\s*color\s*:\s*(#[0-9a-fA-F]{3,6})/);
+
+      if (bgMatch) {
+        // Named-brand highlight span: use exact bg + fg from style
+        const bgRgb = hexToRgb(bgMatch[1]);
+        const fgRgb = fgMatch ? hexToRgb(fgMatch[1]) : [0, 0, 0];
+        if (node.textContent) segments.push({ text: node.textContent, bgRgb, fgRgb });
+      } else if (isUnlisted) {
+        // Unlisted brand: background #e0e7ff, text #000
+        if (node.textContent) segments.push({
+          text: node.textContent,
+          bgRgb: hexToRgb('#e0e7ff'),
+          fgRgb: [0, 0, 0]
+        });
+      } else if (fgMatch && fgMatch[1] === '#94a3b8') {
+        // URL zone — muted grey, no background
+        if (node.textContent) segments.push({ text: node.textContent, bgRgb: null, fgRgb: [160, 160, 160] });
+      } else {
+        // Any other element — recurse into children
+        node.childNodes.forEach(walkNode);
+      }
+    }
+    displayEl.childNodes.forEach(walkNode);
+
+    const fontSize = 7.5, lineH = 4.2;
+    pdf.setFont('courier', 'normal'); pdf.setFontSize(fontSize);
+
+    let curX = margin;
+    let curY = margin + 7; // first line sits just below the header text
+
+    drawHeader(); // stamp header on page 2
+
+    function needNewLine() {
+      curX = margin; curY += lineH;
+      if (curY > pageH - 8) {
+        pdf.addPage();
+        drawHeader();
+        pdf.setFont('courier', 'normal');
+        pdf.setFontSize(fontSize);
+        pdf.setTextColor(30, 30, 30);
+        curY = margin + 7; curX = margin;
+      }
+    }
+
+    function renderSeg(seg) {
+      const lines = seg.text.split('\n');
+      lines.forEach((line, li) => {
+        if (li > 0) needNewLine();
+        if (!line) return;
+        let remaining = line;
+        while (remaining.length > 0) {
+          const available = maxX - curX;
+          if (available < 1) { needNewLine(); continue; }
+          // Binary search: find max chars that fit in available width
+          let lo = 1, hi = remaining.length, fit = 1;
+          while (lo <= hi) {
+            const mid = (lo + hi) >> 1;
+            if (pdf.getTextWidth(remaining.slice(0, mid)) <= available) { fit = mid; lo = mid + 1; }
+            else hi = mid - 1;
+          }
+          let chunk, rest;
+          if (fit >= remaining.length) {
+            chunk = remaining; rest = '';
+          } else {
+            const bp = remaining.lastIndexOf(' ', fit);
+            const cut = bp > 0 ? bp : fit;
+            chunk = remaining.slice(0, cut);
+            rest  = remaining.slice(cut).replace(/^ /, '');
+          }
+          if (!chunk) { needNewLine(); remaining = rest || remaining.slice(1); continue; }
+          const chunkW = pdf.getTextWidth(chunk);
+          // Paint background rectangle first, then text on top
+          if (seg.bgRgb) {
+            pdf.setFillColor(seg.bgRgb[0], seg.bgRgb[1], seg.bgRgb[2]);
+            pdf.rect(curX, curY - lineH * 0.75, chunkW, lineH * 0.92, 'F');
+          }
+          pdf.setTextColor(seg.fgRgb[0], seg.fgRgb[1], seg.fgRgb[2]);
+          pdf.text(chunk, curX, curY);
+          curX += chunkW;
+          remaining = rest;
+          if (remaining.length > 0 && curX >= maxX - 1) needNewLine();
+        }
+      });
+    }
+
+    pdf.setTextColor(30, 30, 30);
+    segments.forEach(renderSeg);
+
+    pdf.save(currentRID + '.pdf');
+
+    _pdfDownloadedRID = currentRID;
+    checkCompletionTrigger();
+    status.textContent = '✓ Downloaded ' + currentRID + '.pdf';
+    status.style.color = '#059669';
+  } catch (err) {
+    console.error('PDF error:', err);
+    status.textContent = 'Error: ' + (err.message || 'Could not generate PDF.');
+    status.style.color = '#dc2626';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MANUAL CANDIDATE ADD
+═══════════════════════════════════════════════════════════════ */
+function addManualCandidate() {
+  const inp = document.getElementById('manualBrandInp');
+  const raw = inp.value.trim(); if (!raw) return;
+  const lower = raw.toLowerCase();
+  const listedLower = getBrands().filter(Boolean).map(b => b.toLowerCase());
+  if (listedLower.includes(lower)) { alert('"' + raw + '" is already in your 10-brand list.'); inp.value=''; return; }
+  if (detectedCandidates.some(c => c.lower === lower)) {
+    selectedCandidates.add(lower); renderCandidateTags(detectedCandidates); inp.value='';
+    document.getElementById('applyBtn').disabled = false;
+    setDetectStatus('"' + raw + '" was already in candidates — now selected.', 'ok'); return;
+  }
+  const newCand = { display: raw, lower, count: 0, score: 99, manual: true };
+  detectedCandidates.unshift(newCand); selectedCandidates.add(lower);
+  renderCandidateTags(detectedCandidates); inp.value='';
+  document.getElementById('applyBtn').disabled = false;
+  setDetectStatus('"' + raw + '" added manually and selected.', 'ok');
+}
+function setDetectStatus(msg, cls) {
+  const el = document.getElementById('detectStatus'); el.textContent = msg; el.className = cls||'';
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SAVE / EXPORT
+═══════════════════════════════════════════════════════════════ */
+function saveAnalysis() {
+  const rows = Array.from(document.querySelectorAll('#tBody tr[data-batch="current"]'));
+  if (!rows.length) { alert('No current-batch rows to save.'); return; }
+
+  const snapshot = rows.map(tr => {
+    const c = tr.querySelectorAll('td');
+    return {
+      rid:           c[0]?.textContent ?? '',
+      cat:           c[1]?.textContent ?? '',
+      brand:         c[2]?.textContent ?? '',
+      abc:           c[3]?.textContent ?? '',
+      binary:        c[4]?.textContent ?? '',
+      count:         c[5]?.textContent ?? '',
+      rank:          c[6]?.textContent ?? '',
+      score:         c[7]?.textContent ?? '',
+      truncated:     getYnVal(c[8]),
+      visualOnly:    getYnVal(c[9]),
+      hindiResponse: getYnVal(c[10]),
+      massTie:       '',
+      massTieBrands: '',
+      crossCategory: getYnVal(c[13]),
+      productLine:   getYnVal(c[14]),
+      unlisted:      c[15]?.textContent ?? '',
+      notes:         c[16]?.textContent ?? ''
+    };
+  });
+
+  const mtPairsSave = snapshot.map(r => ({ brand: r.brand, rank: r.rank }));
+  const mtMapSave = computeMassTie(mtPairsSave);
+  snapshot.forEach(row => {
+    const mt = mtMapSave.get(row.brand) || { massTie: '0', massTieBrands: '' };
+    row.massTie = mt.massTie; row.massTieBrands = mt.massTieBrands;
+  });
+
+  const currentRows = Array.from(document.querySelectorAll('#tBody tr[data-batch="current"]'));
+  currentRows.forEach(tr => {
+    const brand = tr.querySelectorAll('td')[2]?.textContent || '';
+    const mt = mtMapSave.get(brand);
+    if (mt) {
+      const cells = tr.querySelectorAll('td');
+      if (cells[11]) cells[11].textContent = mt.massTie;
+      if (cells[12]) cells[12].textContent = mt.massTieBrands;
+    }
+  });
+
+  sessionLog.push({ saveTime: new Date(), rows: snapshot });
+  const total = sessionLog.reduce((s, e) => s + e.rows.length, 0);
+  const msg = document.getElementById('saveMsg');
+  msg.style.display = 'inline-block';
+  msg.textContent = `Analysis saved. ${total} total row${total!==1?'s':''} in session.`;
+  setTimeout(() => { msg.style.display = 'none'; }, 4000);
+
+  const pdfBtn = document.getElementById('pdfBtn');
+  pdfBtn.disabled = false;
+  const ps = document.getElementById('pdfStatus');
+  ps.style.display = 'inline'; ps.style.color = '#059669';
+  ps.textContent = '✓ Analysis saved — PDF download unlocked.';
+  setTimeout(() => { if (ps.textContent.includes('unlocked')) { ps.style.display='none'; ps.textContent=''; } }, 4000);
+
+  _savedRIDsSession.add(currentRID);
+  checkCompletionTrigger();
+}
+
+function exportCSV() {
+  if (!sessionLog.length) { alert('No saved analyses yet.'); return; }
+  const hdrs = ['RID','Category','Brand','ALL_brand_count','Brand_Present_Binary',
+    'Brand_Mention_Count','FirstMentionRank','RankScore_auto',
+    'Truncated_YN','Visual_Only_YN','Hindi_Response_YN',
+    'Mass_Tie_YN','Mass_Tie_YN (Brands)','Cross_Category_YN','Product_Line_Only_YN',
+    'Unlisted_Brands','Notes'];
+  const lines = [hdrs.map(csvCell).join(',')];
+  sessionLog.forEach(s => s.rows.forEach(r =>
+    lines.push([r.rid,r.cat,r.brand,r.abc,r.binary,r.count,r.rank,r.score,
+      r.truncated||'',r.visualOnly||'',r.hindiResponse||'',
+      r.massTie,r.massTieBrands,r.crossCategory||'',r.productLine||'',
+      r.unlisted,r.notes].map(csvCell).join(','))
+  ));
+  dlFile(lines.join('\r\n'), `AIBG_Session_Export_${isoDate()}.csv`, 'text/csv');
+}
+
+function exportTXT() {
+  if (!sessionLog.length) { alert('No saved analyses yet.'); return; }
+  const hdrs = ['RID','Category','Brand','ALL_brand_count','Brand_Present_Binary',
+    'Brand_Mention_Count','FirstMentionRank','RankScore_auto',
+    'Truncated_YN','Visual_Only_YN','Hindi_Response_YN',
+    'Mass_Tie_YN','Mass_Tie_YN (Brands)','Cross_Category_YN','Product_Line_Only_YN',
+    'Unlisted_Brands','Notes'];
+  const lines = ['AIBG CODING SESSION LOG', 'Exported: ' + new Date().toLocaleString(), ''];
+  sessionLog.forEach((s, idx) => {
+    lines.push(`=== Analysis Save ${idx+1} — ${s.saveTime.toLocaleString()} ===`);
+    lines.push(hdrs.join('\t'));
+    s.rows.forEach(r => lines.push([r.rid,r.cat,r.brand,r.abc,r.binary,r.count,r.rank,r.score,
+      r.truncated||'',r.visualOnly||'',r.hindiResponse||'',
+      r.massTie,r.massTieBrands,r.crossCategory||'',r.productLine||'',
+      r.unlisted,r.notes].join('\t')));
+    lines.push('');
+  });
+  dlFile(lines.join('\n'), `AIBG_Session_Log_${isoDate()}.txt`, 'text/plain');
+}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</body>
+</html>
